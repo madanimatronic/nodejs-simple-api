@@ -1,17 +1,19 @@
-import { UserModel } from '@/db/models/user-model';
 import {
   ExtendedIncomingMessage,
   ExtendedServerResponse,
 } from '@/http-server/types';
+import { userService } from '@/services/UserService';
 
 class UserController {
   async getUsers(req: ExtendedIncomingMessage, res: ExtendedServerResponse) {
     try {
       let users = [];
-      if (req.query.points) {
-        users = await UserModel.find({ points: req.query.points });
+      const queryPoints = req.query.points;
+
+      if (queryPoints) {
+        users = await userService.getUsers(Number(queryPoints));
       } else {
-        users = await UserModel.find();
+        users = await userService.getUsers();
       }
       res.send(users);
     } catch (err) {
@@ -21,8 +23,9 @@ class UserController {
 
   async getUser(req: ExtendedIncomingMessage, res: ExtendedServerResponse) {
     try {
-      const id = Number(req.params.id);
-      const user = await UserModel.findOne({ id: id });
+      const id = Number(req.params.id || undefined);
+      const user = await userService.getUser(id);
+
       if (!user) {
         return res.status(404).send({ error: 'User not found' });
       }
@@ -34,9 +37,8 @@ class UserController {
 
   async createUser(req: ExtendedIncomingMessage, res: ExtendedServerResponse) {
     try {
-      const user = new UserModel(req.body);
-      await user.save();
-      res.send(user);
+      const createdUser = await userService.createUser(req.body);
+      res.send(createdUser);
     } catch (err) {
       res.status(500).send({ error: 'Internal Server Error' });
     }
@@ -44,19 +46,12 @@ class UserController {
 
   async updateUser(req: ExtendedIncomingMessage, res: ExtendedServerResponse) {
     try {
-      const id = Number(req.params.id);
-      const updatedUser = await UserModel.findOneAndUpdate(
-        { id: id },
-        req.body,
-        {
-          new: true,
-        },
-      );
+      const id = Number(req.params.id || undefined);
+      const updatedUser = await userService.updateUser(id, req.body);
 
       if (!updatedUser) {
         return res.status(500).send({ error: 'User update failed' });
       }
-
       res.send(updatedUser);
     } catch (err) {
       res.status(500).send({ error: 'Internal Server Error' });
@@ -65,8 +60,9 @@ class UserController {
 
   async deleteUser(req: ExtendedIncomingMessage, res: ExtendedServerResponse) {
     try {
-      const id = Number(req.params.id);
-      const deletedUser = await UserModel.findOneAndDelete({ id: id });
+      const id = Number(req.params.id || undefined);
+      const deletedUser = await userService.deleteUser(id);
+
       if (!deletedUser) {
         return res.status(404).send({ error: 'User not found' });
       }

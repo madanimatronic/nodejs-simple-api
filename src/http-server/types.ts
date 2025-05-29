@@ -24,7 +24,7 @@ export type NextFunction = () => void;
 // middleware могут расширять функционал объектов запроса и ответа
 export type ExtendedIncomingMessage = IncomingMessage & {
   pathname: string;
-  query: Record<string, string>;
+  query: Partial<Record<string, string>>;
   body: any;
   params: Partial<Record<string, string>>;
 };
