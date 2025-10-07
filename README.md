@@ -2,7 +2,7 @@
 
 ## Описание
 
-Простая реализация REST-API с CRUD операциями на основе собственного минималистичного [фреймворка](https://github.com/Shustenkov/nodejs-simple-framework)
+Простая реализация REST-API с CRUD операциями на основе собственного минималистичного [фреймворка](https://github.com/madanimatronic/nodejs-simple-framework)
 
 ## Начало работы
 
@@ -17,3 +17,5 @@
    подробнее про подключение в [документации](https://mongoosejs.com/docs/connections.html)
 
 2. `npm install`
+
+3. `npm run dev`
